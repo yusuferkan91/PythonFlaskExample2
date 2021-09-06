@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="Text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Book List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>  
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.js"></script>
+</head>
+<body>
+    <br/>
+    <a href={{ url_for('logout') }} class="btn btn-primary">Log Out</a>
+    <div style="width: 70%;">
+        <div class="container" style="float: left; width: 1000px;">
+            <h3 align="center">Book List</h3>
+            <br/>
+            <div class="panel panel-default">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bookModal">
+                    Add New Book
+                  </button>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table id="table_book" class="table table-bordered table-striped">
+                            <thead>
+                                <th>Name</th>
+                                <th>Author</th>
+                                <th>Published</th>
+                            </thead>
+                            <tbody>
+                                {% for row in bookList %}
+                                <tr>
+                                    <td data-name="name" class="name" data-type="text" data-pk="{{row._id}}">{{row.name}}</td>
+                                    <td data-name="author" class="author" data-type="text" data-pk="{{row._id}}">{{row.author}}</td>
+                                    <td data-name="published" class="published" data-type="date" data-viewformat="dd/mm/yyyy" data-format="dd/mm/yyyy" data-placement="right" data-title="When you want vacation to start?" data-pk="{{row._id}}" data-original-title title>{{row.published}}</td>
+                                    <td><a href="javascript:delBook('{{row._id}}','{{row.name}}')" class="btn btn-primary">Delete</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="margin-left: 50%;">
+            <h3 align="center">User List</h3>
+            <br/>
+            <div class="panel panel-default">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#userModal">
+                    Add New Student
+                  </button>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table id="table_user" class="table table-bordered table-striped">
+                            <thead>
+                                <th>Name</th>
+                                <th>Surname</th>
+                                <th>StudentId</th>
+                            </thead>
+                            <tbody>
+                                {% for row in userList %}
+                                <tr>
+                                    {% if row._id != 'admin' %}
+                                    <td data-name="name" class="name" data-type="text" data-pk="{{row._id}}">{{row.name}}</td>
+                                    <td data-name="surname" class="surname" data-type="text" data-pk="{{row._id}}">{{row.surname}}</td>
+                                    <td data-name="studentId" class="studentId" data-type="number" data-pk="{{row._id}}">{{row.studentId}}</td>
+                                    <td><a href="javascript:delUser('{{row._id}}','{{row.name}}')" class="btn btn-primary">Delete</a></td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="UserModal">Add New Student</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form role="form" method="post" action="/addUser">
+                <div class="form-group">
+                  <label class="col-form-label">Name:</label>
+                  <input type="text" class="form-control" id="txtname" name="txtname">
+                </div>
+                <div class="form-group">
+                  <label class="col-form-label">Surname:</label>
+                  <input type="text" class="form-control" id="txtsurname" name="txtsurname">
+                </div>
+                <div class="form-group">
+                  <label class="col-form-label">StudentId:</label>
+                  <input type="number" class="form-control" id="txtstudentId" name="txtstudentId">
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label">Password:</label>
+                    <input type="text" class="form-control" id="txtpassword" name="txtpassword">
+                  </div>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <input name="cmdsubmit" class="btn btn-primary" type="submit" value="Submit" />
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="bookModal" tabindex="-1" role="dialog" aria-labelledby="bookModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="BookModal">Add New Book</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form role="form" method="post" action="/addBook">
+                <div class="form-group">
+                    <label class="col-form-label">Name:</label>
+                    <input type="text" class="form-control" id="txtname" name="txtname">
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label">Author:</label>
+                    <input type="text" class="form-control" id="txtauthor" name="txtauthor">
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label">Publisher:</label>
+                    <input type="date" class="form-control" id="txtpublished" name="txtpublished">
+                </div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input name="cmdsubmit" class="btn btn-primary" type="submit" value="Submit" />
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+      
+</body>
+<script type="text/javascript" language="javascript">
+    $(document).ready(function(){
+        updateUser('td.name', 'Name')
+        updateUser('td.surname', 'Surname')
+        updateUser('td.studentId', 'StudentId')
+        updateBook('td.name', 'Name')
+        updateBook('td.author', 'Author')
+        updateBook('td.published', 'Published')
+    }); 
+    function updateUser(selector_item, title_item){
+        $('#table_user').editable({
+            container:'body',
+            selector:selector_item,
+            url: '/updateUser',
+            title:title_item,
+            type:'POST',
+            validate:function(value){
+                if($.trim(value) == '')
+                {
+                    return 'This field is required';
+                }
+            }
+        });
+    }
+    function updateBook(selector_item, title_item){
+        $('#table_book').editable({
+            container:'body',
+            selector:selector_item,
+            url: '/updateBook',
+            title:title_item,
+            type:'POST',
+            validate:function(value){
+                if($.trim(value) == '')
+                {
+                    return 'This field is required';
+                }
+            }
+        });
+    }
+    function delUser(ID, title){
+        if (confirm("Are you sure you want to delete '" + title + "'")){
+            window.location.href = '/deleteUser/' + ID;
+        }
+    }
+    function delBook(ID, title){
+        if (confirm("Are you sure you want to delete '" + title + "'")){
+            window.location.href = '/deleteBook/' + ID;
+        }
+    }
+</script>
+</html>
